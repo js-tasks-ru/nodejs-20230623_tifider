@@ -20,7 +20,7 @@ class LineSplitStream extends stream.Transform {
       for (let i = 0; i < chunkArray.length - 1; i++) {
         this.push(chunkArray[i]);
       }
-      this.spareChuncks = chunkArray[chunkArray.length - 1];
+      this.spareChuncks = chunkArray.pop();
     }
 
     callback();

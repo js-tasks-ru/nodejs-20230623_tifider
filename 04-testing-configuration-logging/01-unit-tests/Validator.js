@@ -6,8 +6,16 @@ module.exports = class Validator {
   validate(obj) {
     const errors = [];
 
+    if (!this.rules) {
+      return [{error: 'no rules were supplied for validator'}];
+    }
+
     for (const field of Object.keys(this.rules)) {
       const rules = this.rules[field];
+
+      if (!rules.hasOwnProperty('type') || !rules.hasOwnProperty('min') || !rules.hasOwnProperty('max')) {
+        return [{error: `incorrect rule format, expect type, min and max fields, got ${Object.keys(rules).join(', ')}`}];
+      }
 
       const value = obj[field];
       const type = typeof value;

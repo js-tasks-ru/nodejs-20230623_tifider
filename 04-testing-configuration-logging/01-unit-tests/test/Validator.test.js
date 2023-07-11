@@ -198,6 +198,65 @@ describe('testing-configuration-logging/unit-tests', () => {
       expect(errors[1]).to.have.property('error').and.to.be.equal('too little, expect 10, got 1');
     });
 
+    it('Три правила: корректные значения', () => {
+      const validator = new Validator({
+        name: {
+          type: 'string',
+          min: 5,
+          max: 20,
+        },
+        age: {
+          type: 'number',
+          min: 10,
+          max: 20,
+        },
+        lastname: {
+          type: 'string',
+          min: 5,
+          max: 20,
+        },
+      });
+
+      const errors = validator.validate({name: '123456', age: 15, lastname: '123456'});
+
+      expect(errors).to.have.length(0);
+    });
+
+    it('Непроверяемые поля', () => {
+      const validator = new Validator({
+        name: {
+          type: 'string',
+          min: 5,
+          max: 20,
+        },
+      });
+
+      const errors = validator.validate({name: '123456', age: 15, lastname: '123456'});
+
+      expect(errors).to.have.length(0);
+    });
+
+    it('Лишнее правило', () => {
+      const validator = new Validator({
+        name: {
+          type: 'string',
+          min: 5,
+          max: 20,
+        },
+        age: {
+          type: 'number',
+          min: 5,
+          max: 20,
+        },
+      });
+
+      const errors = validator.validate({name: '123456'});
+
+      expect(errors).to.have.length(0);
+    });
+
+
+    //тут надо бы поправить - мне кажется, что это ошибка. Не должно возвращать ошибку валидации, если вдруг нету нужного объекта
     it('Поле = undefined', () => {
       const validator = new Validator({
         age: {
@@ -268,12 +327,5 @@ describe('testing-configuration-logging/unit-tests', () => {
       expect(errors).to.have.length(1);
       expect(errors[0]).to.have.property('error').and.to.be.equal('incorrect rule format, expect type, min and max fields, got type, max');
     });
-
-
-
-
-
-
-
   });
 });

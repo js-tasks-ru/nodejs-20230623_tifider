@@ -323,7 +323,6 @@ describe('testing-configuration-logging/unit-tests', () => {
       expect(errors[0]).to.have.property('error').and.to.be.equal('expect string, got undefined');
     });
 
-
     it('Без правил', () => {
       const validator = new Validator();
 

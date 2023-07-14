@@ -242,7 +242,7 @@ describe('testing-configuration-logging/unit-tests', () => {
       expect(errors).to.have.length(0);
     });
 
-    //тут нет уверенности, что данный кейс корректен. Возможно, ошибки быть не должно
+    // тут нет уверенности, что данный кейс корректен. Возможно, ошибки быть не должно
     it('Поле = undefined', () => {
       const validator = new Validator({
         age: {
@@ -354,7 +354,7 @@ describe('testing-configuration-logging/unit-tests', () => {
           },
         };
 
-        rules.age[key] = rulesTemplate[key] === 'number' ? 'string' : 1;
+        rules.age[key] = rulesTemplate[key] === 'number' ? 'string' : 15;
 
         const errors = new Validator(rules);
 

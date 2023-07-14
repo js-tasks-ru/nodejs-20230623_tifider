@@ -13,9 +13,10 @@ module.exports = class Validator {
       for (const rule in this.rules) {
         if (!this.rules[rule][key]) {
           this.errors.push({error: `incorrect rule format, expect type, min and max fields, got ${Object.keys(this.rules[rule]).join(', ')}`});
+          continue;
         }
 
-        if (this.rules[rule][key] && typeof this.rules[rule][key] !== Validator.ruleTemplate[key]) {
+        if (typeof this.rules[rule][key] !== Validator.ruleTemplate[key]) {
           this.errors.push({error: `field ${key} of rule has incorrect type, expect ${Validator.ruleTemplate[key]}, got ${typeof key}`});
         }
       }

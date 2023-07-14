@@ -3,6 +3,12 @@ const expect = require('chai').expect;
 
 describe('testing-configuration-logging/unit-tests', () => {
   describe('Validator', () => {
+    const rulesTemplate = {
+      type: 'string',
+      min: 'number',
+      max: 'number',
+    };
+
     it('Строка: корректное значение', () => {
       const validator = new Validator({
         name: {
@@ -236,27 +242,7 @@ describe('testing-configuration-logging/unit-tests', () => {
       expect(errors).to.have.length(0);
     });
 
-    it('Лишнее правило', () => {
-      const validator = new Validator({
-        name: {
-          type: 'string',
-          min: 5,
-          max: 20,
-        },
-        age: {
-          type: 'number',
-          min: 5,
-          max: 20,
-        },
-      });
-
-      const errors = validator.validate({name: '123456'});
-
-      expect(errors).to.have.length(0);
-    });
-
-
-    //тут надо бы поправить - мне кажется, что это ошибка. Не должно возвращать ошибку валидации, если вдруг нету нужного объекта
+    //тут нет уверенности, что данный кейс корректен. Возможно, ошибки быть не должно
     it('Поле = undefined', () => {
       const validator = new Validator({
         age: {
@@ -305,6 +291,39 @@ describe('testing-configuration-logging/unit-tests', () => {
       expect(errors[0]).to.have.property('error').and.to.be.equal('too little, expect 10, got 0');
     });
 
+    it('Поле = ""', () => {
+      const validator = new Validator({
+        name: {
+          type: 'string',
+          min: 10,
+          max: 20,
+        },
+      });
+
+      const errors = validator.validate({name: ''});
+
+      expect(errors).to.have.length(1);
+      expect(errors[0]).to.have.property('field').and.to.be.equal('name');
+      expect(errors[0]).to.have.property('error').and.to.be.equal('too short, expect 10, got 0');
+    });
+
+    it('Пустой объект', () => {
+      const validator = new Validator({
+        name: {
+          type: 'string',
+          min: 10,
+          max: 20,
+        },
+      });
+
+      const errors = validator.validate({});
+
+      expect(errors).to.have.length(1);
+      expect(errors[0]).to.have.property('field').and.to.be.equal('name');
+      expect(errors[0]).to.have.property('error').and.to.be.equal('expect string, got undefined');
+    });
+
+
     it('Без правил', () => {
       const validator = new Validator();
 
@@ -314,18 +333,35 @@ describe('testing-configuration-logging/unit-tests', () => {
       expect(errors[0]).to.have.property('error').and.to.be.equal('no rules were supplied for validator');
     });
 
-    it('Некорректные правила', () => {
-      const validator = new Validator({
+    it('Отсутствует поле объекта правила', () => {
+      const errors = new Validator({
         age: {
           type: 'number',
           max: 20,
         },
       });
 
-      const errors = validator.validate({age: 0});
-
       expect(errors).to.have.length(1);
       expect(errors[0]).to.have.property('error').and.to.be.equal('incorrect rule format, expect type, min and max fields, got type, max');
     });
+
+    for (const key in rulesTemplate) {
+      it(`Некорректный тип поля ${key}`, () => {
+        const rules = {
+          age: {
+            type: 'number',
+            min: 10,
+            max: 20,
+          },
+        };
+
+        rules.age[key] = rulesTemplate[key] === 'number' ? 'string' : 1;
+
+        const errors = new Validator(rules);
+
+        expect(errors).to.have.length(1);
+        expect(errors[0]).to.have.property('error').and.to.be.equal(`field ${key} of rule has incorrect type, expect ${rulesTemplate[key]}, got ${typeof key}`);
+      });
+    }
   });
 });

@@ -11,3 +11,7 @@ rules:
     - code: 100
   require-jsdoc:
     - off
+  indent: off
+  no-tabs: off
+  new-cap: off
+  no-trailing-spaces: off

@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const mongoose = require('mongoose');
 const mapProduct = require('../mappers/product');
 const ObjectId = require('mongoose').Types.ObjectId;
 
@@ -21,16 +22,10 @@ module.exports.productList = async function productList(ctx, next) {
 };
 
 module.exports.productById = async function productById(ctx, next) {
-  let {id} = ctx.params;
-  let product;
+  const {id} = ctx.params;
+  if (!mongoose.isValidObjectId(id)) ctx.throw(400);
 
-  try {
-    product = await Product.findById(id);
-  } catch (error) {
-    if (error.kind === 'ObjectId') {
-      ctx.throw(400);
-    }
-  }
+  const product = await Product.findById(id);
 
   if (!product) ctx.throw(404);
 

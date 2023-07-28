@@ -7,11 +7,29 @@ app.use(require('koa-bodyparser')());
 
 const Router = require('koa-router');
 const router = new Router();
+let message;
 
-router.get('/subscribe', async (ctx, next) => {
-});
+router.get('/subscribe',
+    async (ctx, next) => {
+      await new Promise((resolve) => {
+        app.on('message_published', () => resolve());
+      });
 
-router.post('/publish', async (ctx, next) => {
+      next();
+    },
+    (ctx) => {
+      ctx.body = message;
+    });
+
+router.post('/publish', async (ctx) => {
+  if (!ctx.request.body.message) {
+    ctx.status = 400;
+    ctx.message = 'Empty message body, expected string.';
+  } else {
+    message = ctx.request.body.message;
+    app.emit('message_published');
+    ctx.status = 204;
+  }
 });
 
 app.use(router.routes());

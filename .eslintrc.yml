@@ -8,10 +8,11 @@ parserOptions:
 rules:
   max-len:
     - error
-    - code: 100
+    - code: 120
   require-jsdoc:
     - off
   indent: off
   no-tabs: off
   new-cap: off
   no-trailing-spaces: off
+  comma-dangle: off
